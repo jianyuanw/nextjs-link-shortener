@@ -1,0 +1,18 @@
+import { ObjectId } from 'mongodb';
+import { connectToDatabase } from './_connector';
+
+export default async function redirect(req, res) {
+  const db = await connectToDatabase();
+
+  const entry = await db.db('link_db')
+                        .collection('links')
+                        .findOne({
+                          _id: new ObjectId(req.query.id as string)
+                        });
+
+  if (entry !== null) {
+    return res.redirect(301, entry.link);
+  }
+
+  return res.redirect(301, '/');
+}
